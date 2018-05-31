@@ -1,7 +1,8 @@
 'use strict';
 
 import React, { Component, PropTypes } from 'react';
-import { Image } from 'react-native';
+import { Image, TouchableOpacity } from 'react-native';
+import CacheableImage from './../../../src/components/CacheableImage'
 
 import ViewTransformer from 'react-native-view-transformer';
 
@@ -22,9 +23,9 @@ export default class TransformableImage extends Component {
     enableTransform: PropTypes.bool,
     enableScale: PropTypes.bool,
     enableTranslate: PropTypes.bool,
-    onSingleTapConfirmed: PropTypes.func,
     onTransformGestureReleased: PropTypes.func,
-    onViewTransformed: PropTypes.func
+    onViewTransformed: PropTypes.func,
+    onImagePress: PropTypes.func
   };
 
   static defaultProps = {
@@ -94,19 +95,22 @@ export default class TransformableImage extends Component {
         enableResistance={true}
         onTransformGestureReleased={this.props.onTransformGestureReleased}
         onViewTransformed={this.props.onViewTransformed}
-        onSingleTapConfirmed={this.props.onSingleTapConfirmed}
-        maxScale={maxScale}
+        maxScale={1}
         contentAspectRatio={contentAspectRatio}
         onLayout={this.onLayout.bind(this)}
-        style={this.props.style}>
-        <Image
-          {...this.props}
-          style={[this.props.style, {backgroundColor: 'transparent'}]}
-          resizeMode={'contain'}
-          onLoadStart={this.onLoadStart.bind(this)}
-          onLoad={this.onLoad.bind(this)}
-          capInsets={{left: 0.1, top: 0.1, right: 0.1, bottom: 0.1}} //on iOS, use capInsets to avoid image downsampling
-        />
+        style={[this.props.style, this.props.elevation]}>
+        <TouchableOpacity
+          onPress={this.props.onImagePress}
+          activeOpacity={1}>
+          <CacheableImage
+            source={this.props.source}
+            style={[this.props.style, {backgroundColor: 'transparent'}]}
+            resizeMode={'contain'}
+            onLoadStart={this.onLoadStart.bind(this)}
+            onLoad={this.onLoad.bind(this)}
+            capInsets={{left: 0.1, top: 0.1, right: 0.1, bottom: 0.1}} //on iOS, use capInsets to avoid image downsampling
+          />
+        </TouchableOpacity>
       </ViewTransformer>
     );
   }
